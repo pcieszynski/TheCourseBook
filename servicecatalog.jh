@@ -1,0 +1,201 @@
+entity ServiceCatalog{
+    description String,
+    href String,
+    id String,
+    lastUpdate Instant,
+    lifecycleStatus String,
+    name String,
+    relatedParty String,
+    validFor Instant,
+    version String
+}
+
+entity RelatedParty{
+    href String,
+    id String,
+    name String,
+    role String
+}
+
+entity ServiceCategoryRef{
+	href String,
+	id String,
+	name String,
+    referredType String
+}
+
+entity ServiceCategory{
+	description String,
+    href String,
+    id String,
+    isRoot Boolean,
+    lastUpdate Instant,
+    lifecycleStatus String,
+    name String,
+    parentId String,
+    serviceCandidate String,
+    candidates String,
+    validFor Instant,
+    version String
+}
+
+entity ServiceCandidateRef{
+    referredType String,
+    href String,
+    id String,
+    name String,
+    version String
+}
+
+entity ServiceCandidate{
+	description String,
+    href String,
+    id String,
+    lastUpdate String,
+    lifecycleStatus String,
+    name String,
+    validFor Instant,
+    version String
+}
+
+entity ServiceSpecificationRef{
+	referredType String,
+    href String,
+    id String,
+    name String,
+    targetServiceSchema String,
+    version String
+}
+
+entity TargetServiceSchema{
+schemaLocation String,
+type String
+}
+
+entity ServiceSpecification{
+	description String,
+    href String,
+    id String,
+    isBundle String,
+    lastUpdate String,
+    lifecycleStatus String,
+    name String,
+    validFor String,
+    version String
+}
+
+entity ServiceSpecCharRelationship{
+href String,
+id String,
+name String,
+relationshipType String,
+role String,
+validFor Instant
+}
+
+entity ServiceSpecCharacteristic{
+valueSchemaLocation String,
+configurable String,
+description String,
+extensible String,
+isUnique Boolean,
+maxCardinality Integer,
+minCardinality Integer,
+name  String,
+regex String,
+validFor Instant,
+valueType String
+}
+
+entity ServiceSpecCharacteristicValue{
+	isDefault String,
+regex String,
+unitOfMeasure String,
+validFor Instant,
+value AnyBlob,
+valueFrom  Integer,
+valueTo Integer,
+valueType String,
+}
+
+entity ServiceSpecRelationship{
+href String,
+id String,
+name String,
+relationshipType String,
+role String,
+validFor Instant
+}
+
+entity AttachmentRef{
+referredType String,
+description String,
+href String,
+id String,
+url String,
+}
+
+entity ResourceSpecificationRef{
+referredType String,
+href String,
+id String,
+name String,
+version String,
+}
+
+entity ServiceLevelSpecificationRef{
+referredType String,
+href String,
+id String,
+name String,
+}
+
+relationship OneToMany {
+	ServiceCatalog{category} to ServiceCategoryRef,
+    ServiceCatalog{relatedParty} to RelatedParty
+}
+
+relationship OneToMany {
+	ServiceCategory{category} to ServiceCategoryRef,
+    ServiceCategory{serviceCandidate} to ServiceCandidateRef
+}
+
+relationship OneToMany {
+	ServiceCandidate{category} to ServiceCategoryRef,
+}
+
+relationship OneToOne {
+	ServiceCandidate{serviceSpecification} to ServiceSpecificationRef
+}
+
+relationship OneToOne {
+	ServiceSpecificationRef{targetServiceSchema} to TargetServiceSchema
+}
+
+relationship OneToMany{
+	ServiceSpecification{relatedParty} to RelatedParty,
+    ServiceSpecification{serviceSpecCharacteristic} to ServiceSpecCharacteristic,
+    ServiceSpecification{attachment} to AttachmentRef,
+    ServiceSpecification{resourceSpecification} to ResourceSpecificationRef,
+    ServiceSpecification{serviceLevelSpecification} to ServiceLevelSpecificationRef,
+  	ServiceSpecification{serviceSpecRelationship} to ServiceSpecRelationship,
+}
+
+relationship OneToOne {
+	ServiceSpecification{targetServiceSchema} to TargetServiceSchema
+}
+
+// Set pagination options
+//paginate JobHistory, Employee with infinite-scroll
+//paginate Job with pagination
+
+// Use Data Transfert Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+
+skipClient *
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
